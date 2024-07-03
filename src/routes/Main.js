@@ -3,7 +3,8 @@ const router = express.Router();
 const Details = require("../models/Details");
 const Slider = require("../models/Slider");
 const Cards = require("../models/cards");
-const Data=require('../models/data')
+const Data = require('../models/data');
+const Info = require('../models/info');
 
 router.get("/", async (req, res) => {
   const details = await Details.findOne({ _id: "667bba33c7f6970c13c39309" });
@@ -15,23 +16,21 @@ router.get("/", async (req, res) => {
   const cards = await Cards.find();
   console.log(cards);
 
-  
-
   res.render("index", {
     details: details,
     sliders: sliders,
     cards: cards,
-    //left one is a syntax variable and right one is object
   });
 });
 
-router.get("/gallery", async (req, res) => {
+router.get("/sign", async (req, res) => {
   const details = await Details.findOne({ _id: "667bba33c7f6970c13c39309" });
   console.log(details);
-  res.render("gallery", {
+  res.render("sign", {
     details: details,
   });
 });
+
 router.get("/services", async (req, res) => {
   const details = await Details.findOne({ _id: "667bba33c7f6970c13c39309" });
   console.log(details);
@@ -39,6 +38,7 @@ router.get("/services", async (req, res) => {
     details: details,
   });
 });
+
 router.get("/about", async (req, res) => {
   const details = await Details.findOne({ _id: "667bba33c7f6970c13c39309" });
   console.log(details);
@@ -54,6 +54,7 @@ router.get("/contact", async (req, res) => {
     details: details,
   });
 });
+
 router.get("/test", async (req, res) => {
   const details = await Details.findOne({ _id: "667bba33c7f6970c13c39309" });
   console.log(details);
@@ -62,19 +63,42 @@ router.get("/test", async (req, res) => {
   });
 });
 
-router.post("/process-contact-form",async(req,res)=>{
-    try{
-        console.log("this form is submitted")
-    const data=req.body;
-    const newData=new Data(data)
-    const response=await newData.save()
-    res.status(200).json(response)
-    console.log("data saved ")
-    }
-    catch(err){
-        res.status(500).json({error:'internal server error'})
-        console.log(err)
-    }
-})
+router.post("/process-contact-form", async (req, res) => {
+  try {
+    console.log("this form is submitted");
+    const data = req.body;
+    const newData = new Data(data);
+    const response = await newData.save();
+    res.status(200).json(response);
+    console.log("data saved ");
+  } catch (err) {
+    res.status(500).json({ error: 'internal server error' });
+    console.log(err);
+  }
+});
 
+router.post("/fetchsignup", async (req, res) => {
+  try {
+    const data = req.body;
+    const newInfo = new Info(data);
+    const response = await newInfo.save();
+    res.render("Log")
+    console.log("data saved");
+  } catch (err) {
+    res.status(500).json({ error: 'internal server error' });
+    console.log(err);
+  }
+});
+
+// Add a GET route for fetching signup info
+router.get("/infobar",async(req,res)=>{
+  try{
+    const info = await Info.find();
+    res.render("infobar", {info:info})
+  }
+  catch(err){
+    res.status(500).json({error:'internal server error'});
+    console.log(err);
+  }
+})
 module.exports = router;
